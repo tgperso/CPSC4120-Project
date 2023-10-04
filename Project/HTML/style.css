@@ -1,0 +1,27 @@
+header {
+    background-color: #007BFF; /* Header background color */
+    color: #fff; /* Text color in the header */
+    text-align: center; /* Center-align the header content */
+    padding: 20px; /* Add some padding to the header */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /*Add drop shadow */
+}
+
+/* Style for the project name (h1) */
+h1 {
+    font-size: 28px; /* Font size for the project name */
+}
+
+/* Style for the group members (p and ul) */
+p {
+    font-size: 18px; /* Font size for the "Group Members" text */
+}
+
+ul {
+    list-style-type: none; /* Remove bullets from the list */
+    padding: 0; /* Remove default padding from the list */
+}
+
+li {
+    font-size: 16px; /* Font size for the member names */
+    margin: 5px 0; /* Add some margin between member names */
+}
