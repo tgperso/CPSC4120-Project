@@ -355,6 +355,18 @@ function updateSVG(data) {
                 .style("font-size", "14px")
                 .style("font-family", "Poppins")
                 .attr("text-anchor", "middle")
+                .style("font-weight", "bold")
+
+        var yLabel = svg.append("g")
+                .append("text")
+                .text("Top Artists")
+                .attr("x", margin.top/2)
+                .attr("y", margin.top/2 - 5)
+                .attr("fill", "dimgray")
+                .style("font-size", "14px")
+                .style("font-family", "Poppins")
+                .attr("text-anchor", "front")
+                .style("font-weight", "bold")
 
         var vertLine = svg.append("g")
                 .append("line")
@@ -364,7 +376,7 @@ function updateSVG(data) {
                 .attr("y2", margin.top/2)
                 .attr("stroke", "black")
                 .attr("stroke-width", 1)
-                .attr("opacity", 0.5)
+                .attr("opacity", 0.3)
 
         var horizLineBottom = svg.append("g")
                 .append("line")
@@ -374,7 +386,17 @@ function updateSVG(data) {
                 .attr("y2", dim.height - margin.bottom)
                 .attr("stroke", "black")
                 .attr("stroke-width", 1)
-                .attr("opacity", 0.5)
+                .attr("opacity", 0.3)
+
+        var horizLineTop = svg.append("g")
+                .append("line")
+                .attr("x1", margin.top/2)
+                .attr("y1", margin.top/2)
+                .attr("x2", dim.width - margin.right + 5)
+                .attr("y2", margin.top/2)
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .attr("opacity", 0.3)
 
         function radius(d) {
             return radScale(d.total_track_pop)
@@ -385,14 +407,14 @@ function updateSVG(data) {
         var xAxis = svg.append("g")
                 .call(xAxisGen)
                 .style("transform", `translateY(${dim.height-margin.bottom}px)`)
-                .style("opacity", 0.4)
+                .style("opacity", 0.3)
                 .attr("class", "x-axis")
                 .selectAll(".tick text").style("font-size", "14px")
 
         function ticked() {
             svg.selectAll("circle")
             .attr("cx", function(d) {return d.x = Math.max(radius(d) + margin.left, Math.min(dim.width - radius(d) - margin.right, d.x))})
-            .attr("cy", function(d) {return d.y = Math.max(radius(d), Math.min(dim.height - radius(d), d.y))})
+            .attr("cy", function(d) {return d.y = Math.max(radius(d) + margin.top/2 + 5, Math.min(dim.height - radius(d) - margin.bottom, d.y))})
         }
 
         ticked()
