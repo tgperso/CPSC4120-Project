@@ -5,7 +5,6 @@ header {
     color: #fff;
     text-align: center; 
     padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* drop shadow */
 }
 
 /* Footer style */
@@ -14,36 +13,78 @@ footer {
     color: #fff;
     text-align: center;
     padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* drop shadow */
+}
+
+.tooltip {
+    position: absolute;
+    display: none;
+    background-color: white;
+    padding: 6px;
+    border: 1px solid lightgray;
+    color: dimgray;
+    font-family: Poppins;
+    font-size: 14px;
+}
+
+.button-container {
+    display: flex;
+    justify-content:center;
+    padding: 20px
+}
+
+button {
+    margin: 0;
+    padding: 10px 20px;
+    font-family: Poppins;
+    font-weight: bold;
+    opacity: 0.7;
+    background-color: white;
+    color: #333;
+    border: 1px solid lightgray;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    transition: color 0.3s;
+    transition: border 0.3s;
+}
+
+button:hover {
+    background-color: #007BFF;
+    color: white;
+    border: 1px solid #007BFF;
 }
 
 /*Title text style*/
 h1 {
     font-size: 30px;
     font-weight: bold;
+    font-family: Poppins;
 }
 
 /*secondary title style*/
 h2 {
     font-size: 22px;
     font-weight: bold;
+    font-family: Poppins;
 }
 
 /*small detail text style*/
 h3 {
     font-size: 10px;
     font-weight: lighter;
+    font-family: Poppins;
 }
 
 /*Header Title text style*/
 h4 {
     font-size: 40px;
     font-weight: bold;
+    font-family: Poppins;
 }
 
 /* Descriptive text style */
 p {
     font-size: 18px;
+    font-family: Poppins;
 }
 
 /*list object for contributors*/
@@ -56,6 +97,7 @@ ul {
 li {
     font-size: 16px; 
     margin: 5px 0; 
+    font-family: Poppins;
 }
 
 /* Style for data visualizations */
