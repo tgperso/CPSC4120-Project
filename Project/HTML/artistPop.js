@@ -2,7 +2,7 @@ d3.csv("artistPop.csv").then(
     function(dataset){
 
         var dimensions = {
-            width:  2000,
+            width:  1400,
             height: 700,
             margin: {
                 top: 10,
@@ -13,61 +13,42 @@ d3.csv("artistPop.csv").then(
         }
         console.log(dataset)
 
-        xAccessor = d => +d.year
-        yAccessor = d => +d.pop_score_y
+        dataset.forEach(d => {
+            d.artist_id = +d.artist_id;
+            d.pop_score_y = +d.pop_score_y;
+            d.year = +d.year;
+        });
 
         var svg = d3.select("#ArtistPopularity")
                     .style("width", dimensions.width)
                     .style("height", dimensions.height)
 
         var xScale = d3.scaleLinear()
-                       .domain(d3.extent(dataset, xAccessor))
+                       .domain([d3.min(dataset, d => d.year), d3.max(dataset, d => d.year)])
                        .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
 
         var yScale = d3.scaleLinear()
-                       .domain([0, d3.max(dataset, yAccessor)])
+                       .domain([0, d3.max(dataset, d => d.pop_score_y)])
                        .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
         var line = d3.line()
-                     .x(d => xScale(xAccessor(d)))
-                     .y(d => yScale(yAccessor(d)));
-    
-        var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-    
-        var artists = Array.from(d3.group(dataset, d => d.artist_id).values());
-    
-        svg.selectAll(".line")
-           .data(artists)
-           .enter()
-           .append("path")
-           .attr("class", "line")
-           .attr("d", d => line(Array.from(d[1])))
-           .style("stroke", (d, i) => colorScale(i))
-           .style("stroke-width", 2)
-           .style("fill", "none");
+                     .x(d => xScale(d.year))
+                     .y(d => yScale(d.pop_score_y));
 
-        // var line = d3.line()
-        //              .x(d => xScale(+d.year))
-        //              .y(d => yScale(+d.pop_score_y));
+        var groupedData = d3.groups(dataset, d => d.artist_id);
+                 
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-        // // var lines = svg.append("path")
-        // //                .datum(dataset)
-        // //                .attr("fill", "none")
-        // //                .attr("stroke", "steelblue") // Adjust the color as needed.
-        // //                .attr("stroke-width", 2)
-        // //                .attr("d", line);
-
-        // var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
-        // var lines = svg.selectAll(".line")
-        //                .data(dataset)
-        //                .enter()
-        //                .append("path")
-        //                .attr("class", "line")
-        //                .attr("d", d => line(+d.line))
-        //                .style("stroke", d => colorScale(d.artist_id))
-        //                .style("stroke-width", 2)
-        //                .style("fill", "none");
+        var lines = svg.append("g")
+                       .selectAll('.line')
+                       .data(groupedData)
+                       .enter()
+                       .append('path')
+                       .attr('class', 'line')
+                       .attr('d', d => line(d[1]))
+                       .attr('stroke', (_, i) => color(i))
+                       .attr('stroke-width', 2)
+                       .attr('fill', 'none');
 
         var xAxisGen = d3.axisBottom().scale(xScale)
         var xAxis = svg.append("g")
