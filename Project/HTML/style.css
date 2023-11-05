@@ -1,4 +1,8 @@
 
+body {
+    margin: 0;
+}
+
 /* Header style */
 header {
     background-color: #007BFF;
