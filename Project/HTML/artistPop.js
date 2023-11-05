@@ -39,6 +39,15 @@ d3.csv("artistPop.csv").then(
                  
         var color = d3.scaleOrdinal(d3.schemeCategory10);
 
+        function showArtistName(artistId) {
+            const selectedData = dataset.find(d => d.artist_id === artistId);
+          
+            if (selectedData) {
+              const artistNameElement = document.getElementById('artist-name');
+              artistNameElement.innerText = selectedData.artist;
+            }   
+        }
+
         var lines = svg.append("g")
                        .selectAll('.line')
                        .data(groupedData)
@@ -48,20 +57,64 @@ d3.csv("artistPop.csv").then(
                        .attr('d', d => line(d[1]))
                        .attr('stroke', (_, i) => color(i))
                        .attr('stroke-width', 2)
-                       .attr('fill', 'none');
+                       .attr('fill', 'none')
+                       .on('click', function(event, d) {
+                            selectedArtist = d[0];
+                        
+                            d3.selectAll('.line')
+                            .attr('opacity', 0.1);
+                        
+                            d3.select(this)
+                            .attr('opacity', 1);
+                        
+                            showArtistName(d[0]);
+                        })
 
         var xAxisGen = d3.axisBottom().scale(xScale)
         var xAxis = svg.append("g")
                        .call(xAxisGen)
                        .style("transform", `translateY(${dimensions.height - dimensions.margin.bottom}px)`)
-                       .selectAll("text")
-                       .style("text-anchor", "end")
-                       .style("transform", "rotate(-65deg)")
 
         var yAxisGen = d3.axisLeft().scale(yScale)
         var yAxis = svg.append("g")
                        .call(yAxisGen)
                        .style("transform", `translateX(${dimensions.margin.left}px)`)
-                       
+
+        var xLabel = svg.append("g")
+                        .append("text")
+                        .text("Year")
+                        .attr("x", (dimensions.width - dimensions.margin.right - dimensions.margin.left)/2 + dimensions.margin.left)
+                        .attr("y", dimensions.height - dimensions.margin.bottom/6)
+                        .attr("fill", "dimgray")
+                        .style("font-size", "14px")
+                        .style("font-family", "Poppins")
+                        .attr("text-anchor", "middle")
+
+        var yLabel = svg.append("g")
+                        .append("text")
+                        .text("Total Popularity Score")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", dimensions.height/50)
+                        .attr("x", -dimensions.height/2)
+                        .attr("fill", "dimgray")
+                        .style("font-size", "14px")
+                        .style("font-family", "Poppins")
+                        .attr("text-anchor", "middle")
+
+        const resetButton = document.getElementById('reset-button');
+
+        resetButton.addEventListener('click', function() {
+            selectedArtist = null;
+
+            d3.selectAll('.line')
+            .attr('opacity', 1);
+    
+            clearArtistName();
+        });
+        
+        function clearArtistName() {
+            const artistNameElement = document.getElementById('artist-name');
+            artistNameElement.innerText = 'Artist Name will appear here when clicked.';
+        }       
     }
 )
