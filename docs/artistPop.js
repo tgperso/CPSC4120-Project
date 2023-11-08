@@ -11,7 +11,7 @@ d3.csv("artistPop.csv").then(
                 left: 50
             }
         }
-        console.log(dataset)
+        //console.log(dataset)
 
         dataset.forEach(d => {
             d.artist_id = +d.artist_id;
@@ -48,27 +48,68 @@ d3.csv("artistPop.csv").then(
             }   
         }
 
+        let clicked = false;
+
         var lines = svg.append("g")
                        .selectAll('.line')
                        .data(groupedData)
                        .enter()
                        .append('path')
+                    .on('mouseover', function(event, d) {
+                        if(!clicked) {
+                        d3.selectAll('.line')
+                        .transition().duration(200)
+                        .attr('opacity', 0.1);
+
+                        d3.select(this)
+                        .raise()
+                        .transition().duration(100)
+                        .attr('opacity', 1)
+                        .attr('stroke-width', 4);
+                        }
+                    })
+                    .on('mouseout', function(event, d) {
+                        if(!clicked) {
+                        d3.selectAll('.line')
+                        .transition().duration(200)
+                        .attr('stroke-width', 2)
+                        .attr('opacity', 1);
+                        }
+                    })
+                    .on('click', function(event, d) {
+                        clicked = true;
+                        selectedArtist = d[0];
+                        
+                        d3.selectAll('.line')
+                        .transition().duration(200)
+                        .attr('opacity', 0.1);
+                    
+                        d3.select(this)
+                        .raise()
+                        .transition().duration(100)
+                        .attr('opacity', 1)
+                        .attr('stroke-width', 4);
+                    
+                        showArtistName(d[0]);
+                    })
                        .attr('class', 'line')
                        .attr('d', d => line(d[1]))
                        .attr('stroke', (_, i) => color(i))
                        .attr('stroke-width', 2)
                        .attr('fill', 'none')
-                       .on('click', function(event, d) {
-                            selectedArtist = d[0];
-                        
-                            d3.selectAll('.line')
-                            .attr('opacity', 0.1);
-                        
-                            d3.select(this)
-                            .attr('opacity', 1);
-                        
-                            showArtistName(d[0]);
-                        })
+                       .attr('opacity', 1)
+
+
+        svg.on('click', function(event, d){
+            if(!(lines.nodes().includes(event.target))) {
+                clicked = false;
+                d3.selectAll('.line')
+                .transition().duration(200)
+                .attr('stroke-width', 2)
+                .attr('opacity', 1);
+
+            }
+        })
 
         var xAxisGen = d3.axisBottom().scale(xScale)
         var xAxis = svg.append("g")
@@ -106,8 +147,12 @@ d3.csv("artistPop.csv").then(
         resetButton.addEventListener('click', function() {
             selectedArtist = null;
 
+            clicked = false;
+
             d3.selectAll('.line')
-            .attr('opacity', 1);
+            .transition().duration(500)
+            .attr('opacity', 1)
+            .attr('stroke-width', 2);
     
             clearArtistName();
         });
