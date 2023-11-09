@@ -4,20 +4,20 @@ df = pd.read_csv('tracks.csv', parse_dates=['date'])
 df2 = pd.read_csv('artists.csv')
 
 #These vars are for separating the decades for topArtist vis
-# num_artists = 12
+num_artists = 12
 
-# start_date_60s = '1960-01-01'
-# end_date_60s = '1969-12-30'
-# start_date_70s = '1970-01-01'
-# end_date_70s = '1979-12-30'
-# start_date_80s = '1980-01-01'
-# end_date_80s = '1989-12-30'
-# start_date_90s = '1990-01-01'
-# end_date_90s = '1999-12-30'
-# start_date_00s = '2000-01-01'
-# end_date_00s = '2009-12-30'
-# start_date_10s = '2010-01-01'
-# end_date_10s = '2021-12-30'
+start_date_60s = '1960-01-01'
+end_date_60s = '1969-12-30'
+start_date_70s = '1970-01-01'
+end_date_70s = '1979-12-30'
+start_date_80s = '1980-01-01'
+end_date_80s = '1989-12-30'
+start_date_90s = '1990-01-01'
+end_date_90s = '1999-12-30'
+start_date_00s = '2000-01-01'
+end_date_00s = '2009-12-30'
+start_date_10s = '2010-01-01'
+end_date_10s = '2021-12-30'
 
 sd1958 = '1958-08-04'
 ed1958 = '1958-12-30'
@@ -220,16 +220,36 @@ new.rename(columns={'song': 'title'}, inplace=True)
 
 # result = pd.concat([df60, df70, df80, df90, df00, df10])
 # result.to_csv("topArtists.csv", index=False)
+
+def filterTopArtistsDecade(start_date, end_date, num_artists, df, new_col_val):
+
+     dfNew = df.loc[(df['date'] >= start_date) & (df['date'] <= end_date)]
+
+     group = dfNew.groupby('artist_id')['pop_score'].sum().reset_index()
+     group.rename(columns={'pop_score' : 'total_artist_pop'}, inplace=True)
+     dfNew = pd.merge(dfNew, group, on='artist_id', how='left')
+
+     group = group.sort_values(by='total_artist_pop', ascending=False)
+     top_artists = group['artist_id'].head(num_artists)
+
+     dfNew = dfNew[dfNew['artist_id'].isin(top_artists)]
+
+     dfNew = dfNew.drop(['track_id', 'rank', 'date', 'all_artists', 'title', 'last_week', 'weeks_on_chart', 'peak_rank', 'pop_score','is_top_rank', 'ordinal', 'total_artist_pop', 'ID', 'artist'], axis=1)
+
+     dfNew = dfNew.drop_duplicates()
+
+     return dfNew
+
 def filter(start_date, end_date, df, new_col_val):
 
     dfNew = df.loc[(df['date'] >= start_date) & (df['date'] <= end_date)]
 
     group = dfNew.groupby('artist_id')['pop_score'].sum().reset_index()
-    group.rename(columns={'pop_score_y' : 'total_artist_pop'}, inplace=True)
-    dfNew_cols = ['artist_id', 'title', 'artist', 'pop_score']
+    group.rename(columns={'pop_score' : 'total_artist_pop'}, inplace=True)
+    dfNew_cols = ['artist_id', 'artist']
     dfNew = pd.merge(dfNew[dfNew_cols], group, on='artist_id', how='left')
 
-    dfNew = dfNew.loc[dfNew['pop_score_x'] > 1]
+    #dfNew = dfNew.loc[dfNew['total_artist_pop'] > 1]
 
     dfNew['year'] = new_col_val
 
@@ -238,15 +258,18 @@ def filter(start_date, end_date, df, new_col_val):
     return dfNew
 
 df58 = filter(sd1958, ed1958, new, '1958')
+
 df59 = filter(sd1959, ed1959, new, '1959')
 
 df60 = filter(sd1960, ed1960, new, '1960')
 df61 = filter(sd1961, ed1961, new, '1961')
 df62 = filter(sd1962, ed1962, new, '1962')
 df63 = filter(sd1963, ed1963, new, '1963')
+
 df64 = filter(sd1964, ed1964, new, '1964')
 df65 = filter(sd1965, ed1965, new, '1965')
 df66 = filter(sd1966, ed1966, new, '1966')
+
 df67 = filter(sd1967, ed1967, new, '1967')
 df68 = filter(sd1968, ed1968, new, '1968')
 df69 = filter(sd1969, ed1969, new, '1969')
@@ -318,4 +341,17 @@ result = pd.concat([df58, df59,
                     df00, df01, df02, df03, df04, df05, df06, df07, df08, df09,
                     df10, df11, df12, df13, df14, df15, df16, df17, df18, df19,
                     df20, df21])
+
+df60 = filterTopArtistsDecade(start_date_60s, end_date_60s, num_artists, new, '60')
+df70 = filterTopArtistsDecade(start_date_70s, end_date_70s, num_artists, new, '70')
+df80 = filterTopArtistsDecade(start_date_80s, end_date_80s, num_artists, new, '80')
+df90 = filterTopArtistsDecade(start_date_90s, end_date_90s, num_artists, new, '90')
+df00 = filterTopArtistsDecade(start_date_00s, end_date_00s, num_artists, new, '00')
+df10 = filterTopArtistsDecade(start_date_10s, end_date_10s, num_artists, new, '10')
+
+result2 = pd.concat([df60, df70, df80, df90, df00, df10])
+
+result = pd.merge(result2, result, on='artist_id', how='left')
+
 result.to_csv("artistPop.csv", index=False)
+
