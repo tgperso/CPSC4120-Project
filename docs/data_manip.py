@@ -258,6 +258,7 @@ def filter(start_date, end_date, df, new_col_val):
     return dfNew
 
 df58 = filter(sd1958, ed1958, new, '1958')
+
 df59 = filter(sd1959, ed1959, new, '1959')
 
 df60 = filter(sd1960, ed1960, new, '1960')
