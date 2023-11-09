@@ -55,42 +55,39 @@ d3.csv("num1Artists.csv").then((data) => {
     .style("stroke-opacity", (d) => {if (d.percentage_of_year >= 25) return 1;})
     .style("stroke-width", (d) => {if (d.percentage_of_year >= 25) return 3;})
     .style("mix-blend-mode", "overlay")
-    .style("filter", (d) => {
-      if (d.percentage_of_year >= 25) return "url(#stroke-blur-2)";
-      else return "url(#stroke-blur-3)";
-    }); // Apply the Gaussian blur filter to the stroke
+    // .style("filter", "url(#stroke-blur)"); // Apply the Gaussian blur filter to the stroke
 
   // Create a tooltip element to display artist name, percentage, and year
   const tooltip = d3.select(".tooltip")
 
   circles.append("circle")
-  .on("mouseover", function(event, d) {
-    if (this.cy >= 500) { // Check if popularity is greater than 25%
-      const [mouseX, mouseY] = [event.pageX, event.pageY];
+  // .on("mouseover", function(event, d) {
+  //   if (this.cy >= 500) { // Check if popularity is greater than 25%
+  //     const [mouseX, mouseY] = [event.pageX, event.pageY];
   
-      tooltip
-        .style("display", "block")
-        .html(`<strong>Artist:</strong> ${d.artist}<br><strong>Year:</strong> ${d.year}<br><strong>Popularity:</strong> ${d.percentage_of_year}%`)
-        .style("left", mouseX + 20 + "px")
-        .style("top", mouseY - 30 + "px");
+  //     tooltip
+  //       .style("display", "block")
+  //       .html(`<strong>Artist:</strong> ${d.artist}<br><strong>Year:</strong> ${d.year}<br><strong>Popularity:</strong> ${d.percentage_of_year}%`)
+  //       .style("left", mouseX + 20 + "px")
+  //       .style("top", mouseY - 30 + "px");
   
-      d3.select(this)
-        .raise()
-        .transition()
-        .duration(100)
-        .attr("fill", (d) => d3.color(colorScale(d.artist)).darker(2))
-        .attr("r", (d) => radius(d) + 2);
-    }
-  })
-  .on("mouseout", function() {
-    tooltip.style("display", "none");
+  //     d3.select(this)
+  //       .raise()
+  //       .transition()
+  //       .duration(100)
+  //       .attr("fill", (d) => d3.color(colorScale(d.artist)).darker(2))
+  //       .attr("r", (d) => radius(d) + 2);
+  //   }
+  // })
+  // .on("mouseout", function() {
+  //   tooltip.style("display", "none");
   
-    d3.select(this)
-      .transition()
-      .duration(100)
-      .attr("fill", (d) => colorScale(d.artist))
-      .attr("r", (d) => radius(d));
-  });
+  //   d3.select(this)
+  //     .transition()
+  //     .duration(100)
+  //     .attr("fill", (d) => colorScale(d.artist))
+  //     .attr("r", (d) => radius(d));
+  // });
 
   // Create x and y axes using d3.axis and append them to the SVG
   const xAxis = d3.axisBottom(xScale).tickFormat(d3.format(""));
