@@ -28,10 +28,17 @@ d3.csv("num1Artists.csv").then((data) => {
 
   defs
     .append("filter")
-    .attr("id", "stroke-blur")
+    .attr("id", "stroke-blur-3")
     .append("feGaussianBlur")
     .attr("in", "SourceGraphic") // Apply the blur to the entire shadow circle
-    .attr("stdDeviation", 5); // Adjust the standard deviation for the desired blur amount
+    .attr("stdDeviation", 3); // Adjust the standard deviation for the desired blur amount
+
+  defs
+    .append("filter")
+    .attr("id", "stroke-blur-2")
+    .append("feGaussianBlur")
+    .attr("in", "SourceGraphic") // Apply the blur to the entire shadow circle
+    .attr("stdDeviation", 2); // Adjust the standard deviation for the desired blur amount
 
   // Plot circles for the density graph with blurred stroke
   const circles = svg
@@ -41,9 +48,12 @@ d3.csv("num1Artists.csv").then((data) => {
     .append("circle")
     .attr("cx", (d) => xScale(d.year))
     .attr("cy", (d) => yScale(d.percentage_of_year))
-    .attr("r", 30)
+    .attr("r", 20)
     .style("fill", "hsl(230, 100%, 75%)")
     .style("opacity", 0.3)
+    .style("stroke", (d) => {if (d.percentage_of_year >= 25) return "black";})
+    .style("stroke-opacity", (d) => {if (d.percentage_of_year >= 25) return 1;})
+    .style("stroke-width", (d) => {if (d.percentage_of_year >= 25) return 3;})
     .style("mix-blend-mode", "overlay")
     // .style("filter", "url(#stroke-blur)"); // Apply the Gaussian blur filter to the stroke
 
@@ -80,7 +90,7 @@ d3.csv("num1Artists.csv").then((data) => {
   // });
 
   // Create x and y axes using d3.axis and append them to the SVG
-  const xAxis = d3.axisBottom(xScale);
+  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format(""));
   const yAxis = d3.axisLeft(yScale);
 
   svg.append("g").attr("class", "x-axis").attr("transform", `translate(0, ${height})`).call(xAxis);
