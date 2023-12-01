@@ -26,6 +26,14 @@ d3.csv("artistPop.csv").then(
             d.year = parseDate(d.year);
         });
 
+        var artistMaxPop = d3.rollup(
+            dataset,
+            v => d3.max(v, d => d.total_artist_pop),
+            d => d.artist_id
+        )
+
+        var artistMaxPopArray = Array.from(artistMaxPop, ([artist_id, maxPop]) => ({ artist_id, maxPop }))
+
         var svg = d3.select("#ArtistPopularity")
                     .style("width", dimensions.width)
                     .style("height", dimensions.height)
@@ -35,108 +43,149 @@ d3.csv("artistPop.csv").then(
                        .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
 
         var yScale = d3.scaleLinear()
-                       .domain([0, d3.max(dataset, d => d.total_artist_pop)])
+                       .domain([0, d3.max(artistMaxPopArray, d => d.maxPop)])
                        .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
-        
-        var groupedData = d3.groups(dataset, d => d.artist_id);
 
-        var line = d3.line()
-                     .x(function(d) {return xScale(d.year)})
-                     .y(function(d) {return yScale(d.total_artist_pop)});
-                 
-        var color = d3.scaleOrdinal(d3.schemeCategory10);
-/*
-        function showArtistName(artistId) {
-            const selectedData = dataset.find(d => d.artist_id === artistId);
-          
-            if (selectedData) {
-              const artistNameElement = document.getElementById('artist-name');
-              artistNameElement.innerText = selectedData.artist;
-            }   
-        }
-*/
-        function getName(artist_id) {
-            var selectedData = dataset.find(d => d.artist_id === artist_id)
-            return selectedData.artist
-        }
+        var dataByDecade = d3.group(dataset, d => Math.floor(d.year/10) * 10);
+
+        var colorScale = d3.scaleOrdinal()
+                       .domain(Array.from(dataByDecade.keys()))
+                       .range(["yellow", "green", "blue", "purple", "red", "orange"]);
+
+        // var tooltip = d3.select("#ArtistPopularity").append("div")
+        //                 .attr("class", "tooltip")
+        //                 .style("opacity", 0);
+        // function getName(artist_id) {
+        //     var selectedData = dataset.find(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist)
+        //     return selectedData
+        // }
 
         let clicked = false;
         var tooltip = d3.select(".tooltip")
 
-        var lines = svg.append("g")
-                       .selectAll('.line')
-                       .data(groupedData)
-                       .enter()
-                       .append('path')
-                    .on('mouseover', function(event, d) {
-                        if(!clicked) {
+        var dots = svg.selectAll("circle")
+                      .data(artistMaxPopArray)
+                      .enter()
+                      .append("circle")
+                      .attr("cx", d => xScale(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year))
+                      .attr("cy", d => yScale(d.maxPop))
+                      .attr("r", 5)
+                      .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 1)
+                      .on("mouseover", function(event, d) {
+                        if(!clicked)
+                        {
+                            var [mouseX, mouseY] = [event.pageX, event.pageY]
 
-                        selectedArtist = d[0]
+                            tooltip
+                                .style("display", "block")
+                                .html(`<strong>Artist:</strong> ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}`)
+                                .style("left", mouseX + 20 + "px")
+                                .style("top", mouseY - 30 + "px")
 
-                        var [mouseX, mouseY] = [event.pageX, event.pageY]
-
-                        tooltip
-                            .style("display", "block")
-                            .html(`<strong>Artist:</strong> ${getName(d[0])}`)
-                            .style("left", mouseX + 20 + "px")
-                            .style("top", mouseY - 30 + "px")
-
-                        d3.selectAll('.line')
-                        .transition().duration(100)
-                        .attr('opacity', 0.1);
-
-                        d3.select(this)
-                        .raise()
-                        .transition().duration(100)
-                        .attr('opacity', 1)
-                        .attr('stroke-width', 4);
+                            tooltip.transition()
+                                .duration(200)
+                                .style("opacity", .9);
+                            tooltip.html(`Artist: ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}<br>Popularity: ${d.maxPop}`)
+                                .style("left", (event.pageX + 5) + "px")
+                                .style("top", (event.pageY - 28) + "px");
                         }
-                    })
-                    .on('mouseout', function(event, d) {
-                        if(!clicked) {
-                        tooltip.style("display", "none");
+                      })
+                      .on("mouseout", function() {
+                        tooltip.transition()
+                               .duration(500)
+                               .style("opacity", 0);
+                      })
+        
+        // var line = d3.line()
+        //              .x(function(d) {return xScale(d.year)})
+        //              .y(function(d) {return yScale(d.total_artist_pop)});
+                 
+        // var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-                        d3.selectAll('.line')
-                        .transition().duration(100)
-                        .attr('stroke-width', 2)
-                        .attr('opacity', 1);
-                        }
-                    })
-                    .on('click', function(event, d) {
-                        clicked = true;
-                        //selectedArtist = d[0];
+        // function getName(artist_id) {
+        //     var selectedData = dataset.find(d => d.artist_id === artist_id)
+        //     return selectedData.artist
+        // }
+
+        // let clicked = false;
+        // var tooltip = d3.select(".tooltip")
+
+        // var lines = svg.append("g")
+        //                .selectAll('.line')
+        //                .data(groupedData)
+        //                .enter()
+        //                .append('path')
+        //             .on('mouseover', function(event, d) {
+        //                 if(!clicked) {
+
+        //                 selectedArtist = d[0]
+
+        //                 var [mouseX, mouseY] = [event.pageX, event.pageY]
+
+        //                 tooltip
+        //                     .style("display", "block")
+        //                     .html(`<strong>Artist:</strong> ${getName(d[0])}`)
+        //                     .style("left", mouseX + 20 + "px")
+        //                     .style("top", mouseY - 30 + "px")
+
+        //                 d3.selectAll('.line')
+        //                 .transition().duration(100)
+        //                 .attr('opacity', 0.1);
+
+        //                 d3.select(this)
+        //                 .raise()
+        //                 .transition().duration(100)
+        //                 .attr('opacity', 1)
+        //                 .attr('stroke-width', 4);
+        //                 }
+        //             })
+        //             .on('mouseout', function(event, d) {
+        //                 if(!clicked) {
+        //                 tooltip.style("display", "none");
+
+        //                 d3.selectAll('.line')
+        //                 .transition().duration(100)
+        //                 .attr('stroke-width', 2)
+        //                 .attr('opacity', 1);
+        //                 }
+        //             })
+        //             .on('click', function(event, d) {
+        //                 clicked = true;
+        //                 //selectedArtist = d[0];
                         
-                        d3.selectAll('.line')
-                        .transition().duration(100)
-                        .attr('opacity', 0.1);
+        //                 d3.selectAll('.line')
+        //                 .transition().duration(100)
+        //                 .attr('opacity', 0.1);
                     
-                        d3.select(this)
-                        .raise()
-                        .transition().duration(100)
-                        .attr('opacity', 1)
-                        .attr('stroke-width', 4);
+        //                 d3.select(this)
+        //                 .raise()
+        //                 .transition().duration(100)
+        //                 .attr('opacity', 1)
+        //                 .attr('stroke-width', 4);
                     
-                        //showArtistName(d[0]);
-                    })
-                       .attr('class', 'line')
-                       .attr('d', d => line(d[1]))
-                       .attr('stroke', (_, i) => color(i))
-                       .attr('stroke-width', 2)
-                       .attr('fill', 'none')
-                       .attr('opacity', 1)
+        //                 //showArtistName(d[0]);
+        //             })
+        //                .attr('class', 'line')
+        //                .attr('d', d => line(d[1]))
+        //                .attr('stroke', (_, i) => color(i))
+        //                .attr('stroke-width', 2)
+        //                .attr('fill', 'none')
+        //                .attr('opacity', 1)
 
 
-        svg.on('click', function(event, d){
-            if(!(lines.nodes().includes(event.target))) {
-                clicked = false;
-                tooltip.style("display", "none");
-                d3.selectAll('.line')
-                .transition().duration(100)
-                .attr('stroke-width', 2)
-                .attr('opacity', 1);
+        // svg.on('click', function(event, d){
+        //     if(!(lines.nodes().includes(event.target))) {
+        //         clicked = false;
+        //         tooltip.style("display", "none");
+        //         d3.selectAll('.line')
+        //         .transition().duration(100)
+        //         .attr('stroke-width', 2)
+        //         .attr('opacity', 1);
 
-            }
-        })
+        //     }
+        // })
 
         var xAxisGen = d3.axisBottom().scale(xScale)
         var xAxis = svg.append("g")
@@ -168,25 +217,5 @@ d3.csv("artistPop.csv").then(
                         .style("font-size", "14px")
                         .style("font-family", "Poppins")
                         .attr("text-anchor", "middle")
-
-        //const resetButton = document.getElementById('reset-button');
-        /*
-        resetButton.addEventListener('click', function() {
-            selectedArtist = null;
-
-            clicked = false;
-
-            d3.selectAll('.line')
-            .transition().duration(500)
-            .attr('opacity', 1)
-            .attr('stroke-width', 2);
-    
-            clearArtistName();
-        });
-        
-        function clearArtistName() {
-            const artistNameElement = document.getElementById('artist-name');
-            artistNameElement.innerText = 'Artist Name will appear here when clicked.';
-        }  */     
     }
 )
