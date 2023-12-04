@@ -11,6 +11,7 @@ d3.csv("artistPop.csv").then(
                 left: 50
             }
         }
+
         //console.log(dataset)
 
         //ensuring these vars are read as numbers
@@ -62,6 +63,27 @@ d3.csv("artistPop.csv").then(
 
         let clicked = false;
         var tooltip = d3.select(".tooltip")
+
+        
+        const linearRegression = d3.regressionLinear()
+            .x((d) => xScale(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year))
+            .y((d) => yScale(d.maxPop));
+
+        const regressionLine = linearRegression(artistMaxPopArray);
+
+            // Define a line generator for the regression line
+        const lineGenerator = d3.line()
+              .x((d) => d[0])
+              .y((d) => d[1]);
+          
+            // Draw the regression line
+        svg.append("path")
+              .datum(regressionLine)
+              .attr("fill", "none")
+              .attr("stroke", "blue") // Adjust line color as needed
+              .attr("stroke-width", 3) // Adjust line width as needed
+              .attr("opacity", 0.5)
+              .attr("d", lineGenerator);
 
         var dots = svg.selectAll("circle")
                       .data(artistMaxPopArray)
