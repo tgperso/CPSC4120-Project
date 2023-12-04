@@ -93,7 +93,7 @@
                                 .style("font-family", "Poppins")
                                 .style("font-weight", "bold")
                                 .style("margin-bottom", "30px")
-                                .text("Top 50 Artists by Total Track Popularity")
+                                .text("Top 50 Tracks by All-Time Popularity")
 
                             const tooltip = d3.select(".tooltip")
 
@@ -111,7 +111,7 @@
                                     
                                         tooltip
                                         .style("display", "block")
-                                        .html(`<strong>Artist:</strong> ${d.artist}<br><strong>Era:</strong> ${d.era}<br><strong>Popularity:</strong> ${d.total_track_pop}`)
+                                        .html(`<strong>Track:<strong> ${d.title} <br><strong>Artist:</strong> ${d.artist}<br><strong>Era:</strong> ${d.era}<br><strong>Popularity:</strong> ${d.total_track_pop}`)
                                         .style("left", mouseX + 20 + "px")
                                         .style("top", mouseY - 30 + "px");
                                         
