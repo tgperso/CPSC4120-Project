@@ -50,8 +50,8 @@ d3.csv("artistPop.csv").then(
 
         var colorScale = d3.scaleOrdinal()
                        .domain(Array.from(dataByDecade.keys()))
-                       .range(["yellow", "green", "blue", "purple", "red", "orange"]);
-
+                       .range(["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949"]);
+                
         // var tooltip = d3.select("#ArtistPopularity").append("div")
         //                 .attr("class", "tooltip")
         //                 .style("opacity", 0);
@@ -71,8 +71,6 @@ d3.csv("artistPop.csv").then(
                       .attr("cy", d => yScale(d.maxPop))
                       .attr("r", 5)
                       .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
-                      .attr("stroke", "black")
-                      .attr("stroke-width", 1)
                       .on("mouseover", function(event, d) {
                         if(!clicked)
                         {
@@ -84,18 +82,23 @@ d3.csv("artistPop.csv").then(
                                 .style("left", mouseX + 20 + "px")
                                 .style("top", mouseY - 30 + "px")
 
-                            tooltip.transition()
-                                .duration(200)
-                                .style("opacity", .9);
-                            tooltip.html(`Artist: ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}<br>Popularity: ${d.maxPop}`)
+                            tooltip.html(`<strong>Artist:</strong> ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}<br><strong>Popularity: </strong>${parseInt(d.maxPop)}`)
                                 .style("left", (event.pageX + 5) + "px")
                                 .style("top", (event.pageY - 28) + "px");
+
+                            d3.select(this)
+                                .raise()
+                                .transition().duration(100)
+                                .attr("fill", d => d3.color(colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10)).darker(2))
+                                .attr("r", d => 7)
                         }
                       })
                       .on("mouseout", function() {
-                        tooltip.transition()
-                               .duration(500)
-                               .style("opacity", 0);
+                        tooltip.style("display", "none");
+                        d3.select(this)
+                        .transition().duration(100)
+                        .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
+                        .attr("r", 5)
                       })
         
         // var line = d3.line()
