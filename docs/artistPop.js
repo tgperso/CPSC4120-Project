@@ -2,16 +2,15 @@ d3.csv("artistPop.csv").then(
     function(dataset){
 
         var dimensions = {
-            width:  1000,
-            height: 700,
+            width:  800,
+            height: 500,
             margin: {
-                top: 10,
+                top: 50,
                 bottom: 50,
                 right: 10,
                 left: 50
             }
         }
-
         //console.log(dataset)
 
         //ensuring these vars are read as numbers
@@ -51,20 +50,18 @@ d3.csv("artistPop.csv").then(
 
         var colorScale = d3.scaleOrdinal()
                        .domain(Array.from(dataByDecade.keys()))
-                       .range(["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949"]);
-                
-        // var tooltip = d3.select("#ArtistPopularity").append("div")
-        //                 .attr("class", "tooltip")
-        //                 .style("opacity", 0);
-        // function getName(artist_id) {
-        //     var selectedData = dataset.find(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist)
-        //     return selectedData
-        // }
+                       .range(["#e15759","#76b7b2","#59a14f","#edc949","#4e79a7","#f28e2c"]);
+                       //#76b7b2 -> teal
+                       //#59a14f -> green
+                       //#edc949 -> yellow
+                       //#f28e2c -> orange
+                       //#4e79a7 -> blue
+                       //#e15759 -> red
 
         let clicked = false;
         var tooltip = d3.select(".tooltip")
 
-        
+
         const linearRegression = d3.regressionLinear()
             .x((d) => xScale(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year))
             .y((d) => yScale(d.maxPop));
@@ -75,12 +72,12 @@ d3.csv("artistPop.csv").then(
         const lineGenerator = d3.line()
               .x((d) => d[0])
               .y((d) => d[1]);
-          
+
             // Draw the regression line
         svg.append("path")
               .datum(regressionLine)
               .attr("fill", "none")
-              .attr("stroke", "blue") // Adjust line color as needed
+              .attr("stroke", "black") // Adjust line color as needed
               .attr("stroke-width", 3) // Adjust line width as needed
               .attr("opacity", 0.5)
               .attr("d", lineGenerator);
@@ -122,95 +119,6 @@ d3.csv("artistPop.csv").then(
                         .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                         .attr("r", 5)
                       })
-        
-        // var line = d3.line()
-        //              .x(function(d) {return xScale(d.year)})
-        //              .y(function(d) {return yScale(d.total_artist_pop)});
-                 
-        // var color = d3.scaleOrdinal(d3.schemeCategory10);
-
-        // function getName(artist_id) {
-        //     var selectedData = dataset.find(d => d.artist_id === artist_id)
-        //     return selectedData.artist
-        // }
-
-        // let clicked = false;
-        // var tooltip = d3.select(".tooltip")
-
-        // var lines = svg.append("g")
-        //                .selectAll('.line')
-        //                .data(groupedData)
-        //                .enter()
-        //                .append('path')
-        //             .on('mouseover', function(event, d) {
-        //                 if(!clicked) {
-
-        //                 selectedArtist = d[0]
-
-        //                 var [mouseX, mouseY] = [event.pageX, event.pageY]
-
-        //                 tooltip
-        //                     .style("display", "block")
-        //                     .html(`<strong>Artist:</strong> ${getName(d[0])}`)
-        //                     .style("left", mouseX + 20 + "px")
-        //                     .style("top", mouseY - 30 + "px")
-
-        //                 d3.selectAll('.line')
-        //                 .transition().duration(100)
-        //                 .attr('opacity', 0.1);
-
-        //                 d3.select(this)
-        //                 .raise()
-        //                 .transition().duration(100)
-        //                 .attr('opacity', 1)
-        //                 .attr('stroke-width', 4);
-        //                 }
-        //             })
-        //             .on('mouseout', function(event, d) {
-        //                 if(!clicked) {
-        //                 tooltip.style("display", "none");
-
-        //                 d3.selectAll('.line')
-        //                 .transition().duration(100)
-        //                 .attr('stroke-width', 2)
-        //                 .attr('opacity', 1);
-        //                 }
-        //             })
-        //             .on('click', function(event, d) {
-        //                 clicked = true;
-        //                 //selectedArtist = d[0];
-                        
-        //                 d3.selectAll('.line')
-        //                 .transition().duration(100)
-        //                 .attr('opacity', 0.1);
-                    
-        //                 d3.select(this)
-        //                 .raise()
-        //                 .transition().duration(100)
-        //                 .attr('opacity', 1)
-        //                 .attr('stroke-width', 4);
-                    
-        //                 //showArtistName(d[0]);
-        //             })
-        //                .attr('class', 'line')
-        //                .attr('d', d => line(d[1]))
-        //                .attr('stroke', (_, i) => color(i))
-        //                .attr('stroke-width', 2)
-        //                .attr('fill', 'none')
-        //                .attr('opacity', 1)
-
-
-        // svg.on('click', function(event, d){
-        //     if(!(lines.nodes().includes(event.target))) {
-        //         clicked = false;
-        //         tooltip.style("display", "none");
-        //         d3.selectAll('.line')
-        //         .transition().duration(100)
-        //         .attr('stroke-width', 2)
-        //         .attr('opacity', 1);
-
-        //     }
-        // })
 
         var xAxisGen = d3.axisBottom().scale(xScale)
         var xAxis = svg.append("g")
@@ -242,5 +150,15 @@ d3.csv("artistPop.csv").then(
                         .style("font-size", "14px")
                         .style("font-family", "Poppins")
                         .attr("text-anchor", "middle")
+
+        var title = svg.append("g")
+                        .append("text")
+                        .text("Top Artists' Peak Popularity Throughout Time")
+                        .attr("x", dimensions.margin.left/2 - 5)
+                        .attr("y", dimensions.margin.top/2 + 5)
+                        .attr("fill", "dimgray")
+                        .style("font-size", "22px")
+                        .style("font-family", "Poppins")
+                        .style("font-weight", "bold")
     }
 )

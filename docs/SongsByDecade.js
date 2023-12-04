@@ -6,8 +6,8 @@ d3.csv("topArtists.csv").then(
 
 function updateSVG(data) {
     var dim = {
-        width: 1000,
-        height: 800
+        width: 800,
+        height: 900
     }
 
     var margin = {
@@ -161,7 +161,7 @@ function updateSVG(data) {
         .text("Distribution of Top Artists' Song Popularity Throughout Time")
         .attr("x", margin.left/2 - 5)
         .attr("y", margin.top/2 + 5)
-        .attr("fill", "black")
+        .attr("fill", "dimgray")
         .style("font-size", "22px")
         .style("font-family", "Poppins")
         .style("font-weight", "bold")

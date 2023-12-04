@@ -7,44 +7,59 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Poppins:400,700,900');
+        body {
+            display: flex;
+        }
+        main {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        section {
+            width: 60%; /* Adjust the width as needed */
+        }
     </style>
 </head>
 <body>
-    <header>
+    <!-- <header>
         <h4>A Data Driven Insight into the History of Music Popularity</h4>
         <p>Nic Mowll | Michael Harris | Thomas Personett</p>
-    </header>
+    </header> -->
 
-    <section class="visualization">
+    <main>
+        <section class="visualization">
+            <h4>History of Music Popularity</h4>
             <div class="tooltip"></div>
             <div>
-                <svg id="SongsByDecade">
-
-                </svg>
+                <svg id="SongsByDecade"></svg>
             </div>
-    </section>
+        </section>
 
-    <section class="visualization">
-        <div>
-            <svg id="ArtistPopularity"></svg>
-            <!--<p><strong>Current Artist:<div id="artist-name">Artist Name will appear here when clicked.</div></strong></div></p>
-            <button id="reset-button">Reset Lines</button>-->
-            <script src="artistPop.js"></script>
-        </div>
+        <section class="visualization">
+            <div>
+                <svg id="ArtistPopularity"></svg>
+                <!-- <p><strong>Current Artist:<div id="artist-name">Artist Name will appear here when clicked.</div></strong></div></p>
+                <button id="reset-button">Reset Lines</button> -->
+                <script src="artistPop.js"></script>
+            </div>
+            <div>
+                <h4>Placeholder for third viz</h4>
+            </div>
+        </section>
 
-    </section>
+        <!-- <section class="visualization">
+            <div>
+                <svg id="distro-vis"></svg>
+                <script src="distro.js"></script>
+            </div>
+        </section> -->
+    </main>
 
-    <section class="visualization">
-        <div>
-            <svg id="distro-vis"></svg>
-            <script src="distro.js"></script>
-        </div>
-    </section>
-
-    <footer>
+    <!-- <footer>
         <p>Thank you to Dylan Burati for the BillBoard Hot 100 - Full History Dataset</p>
         <h3>Source: https://www.kaggle.com/datasets/dylanburati/billboard-hot-100-full-history</h3>
-    </footer>
+    </footer> -->
 
     <script src="SongsByDecade.js"></script>
     <!-- <script src="topArtists.js"></script> -->
