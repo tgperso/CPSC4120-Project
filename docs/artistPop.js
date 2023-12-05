@@ -1,3 +1,13 @@
+var interact = interact || {};
+
+interact.digDown2 = function() {
+    console.log("Dig down 2")
+}
+
+interact.digUp2 = function() {
+    console.log("Dig Up 2")
+}
+
 d3.csv("artistPop.csv").then(
     function(dataset){
 
@@ -89,6 +99,7 @@ d3.csv("artistPop.csv").then(
                       .attr("cx", d => xScale(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year))
                       .attr("cy", d => yScale(d.maxPop))
                       .attr("r", 5)
+                      .style("cursor", "pointer")
                       .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                       .on("mouseover", function(event, d) {
                         if(!clicked)
@@ -101,7 +112,7 @@ d3.csv("artistPop.csv").then(
                                 .style("left", mouseX + 20 + "px")
                                 .style("top", mouseY - 30 + "px")
 
-                            tooltip.html(`<strong>Artist:</strong> ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}<br><strong>Popularity: </strong>${parseInt(d.maxPop)}`)
+                            tooltip.html(`<strong>Artist:</strong> ${dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).artist}<br><strong>Peak Year: </strong>${(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10}`)
                                 .style("left", (event.pageX + 5) + "px")
                                 .style("top", (event.pageY - 28) + "px");
 
@@ -118,6 +129,11 @@ d3.csv("artistPop.csv").then(
                         .transition().duration(100)
                         .attr("fill", d => colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                         .attr("r", 5)
+                      })
+                      .on("click", function(event, d) {
+                        interact.digDown1((Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10).toString().slice(-2), colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
+                        console.log((Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10).toString().slice(-2))
+                        console.log(colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                       })
 
         var xAxisGen = d3.axisBottom().scale(xScale)
@@ -162,3 +178,4 @@ d3.csv("artistPop.csv").then(
                         .style("font-weight", "bold")
     }
 )
+
