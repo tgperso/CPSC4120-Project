@@ -13,7 +13,7 @@ d3.csv("artistPop.csv").then(
 
         var dimensions = {
             width:  650,
-            height: 500,
+            height: 400,
             margin: {
                 top: 50,
                 bottom: 50,
@@ -160,7 +160,7 @@ d3.csv("artistPop.csv").then(
                         .append("text")
                         .text("Total Popularity Score")
                         .attr("transform", "rotate(-90)")
-                        .attr("y", dimensions.height/50)
+                        .attr("y", dimensions.height/50 + 8)
                         .attr("x", -dimensions.height/2)
                         .attr("fill", "dimgray")
                         .style("font-size", "14px")
