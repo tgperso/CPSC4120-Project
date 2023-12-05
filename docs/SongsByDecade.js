@@ -214,8 +214,8 @@ function updateSVGDecade(init_data, era, color) {
 
 
     var dim = {
-        width: 800,
-        height: 900
+        width: 600,
+        height: 700
     }
 
     var margin = {
