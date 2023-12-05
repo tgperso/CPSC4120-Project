@@ -21,7 +21,7 @@ interact.digUp1 = function() {
 function updateSVG(data) {
     var dim = {
         width: 600,
-        height: 900
+        height: 700
     }
 
     var margin = {
