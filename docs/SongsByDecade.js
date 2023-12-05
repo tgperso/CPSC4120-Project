@@ -188,7 +188,7 @@ function updateSVG(data) {
         .attr("x", margin.left/2 - 5)
         .attr("y", margin.top/2 + 5)
         .attr("fill", "dimgray")
-        .style("font-size", "22px")
+        .style("font-size", "18px")
         .style("font-family", "Poppins")
         .style("font-weight", "bold")
 
