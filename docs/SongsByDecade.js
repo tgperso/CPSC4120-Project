@@ -20,7 +20,7 @@ interact.digUp1 = function() {
 
 function updateSVG(data) {
     var dim = {
-        width: 650,
+        width: 600,
         height: 900
     }
 
