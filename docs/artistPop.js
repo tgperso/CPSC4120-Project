@@ -12,7 +12,7 @@ d3.csv("artistPop.csv").then(
     function(dataset){
 
         var dimensions = {
-            width:  800,
+            width:  700,
             height: 500,
             margin: {
                 top: 50,
