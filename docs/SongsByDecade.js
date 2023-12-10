@@ -20,7 +20,7 @@ interact.digUp1 = function() {
 
 function updateSVG(data) {
     var dim = {
-        width: 600,
+        width: 700,
         height: 700
     }
 
@@ -205,6 +205,12 @@ function updateSVG(data) {
     ticked()
 }
 
+
+
+
+
+
+
 function updateSVGDecade(init_data, era, color) {
     var data = filterData(era, init_data)
 
@@ -214,7 +220,7 @@ function updateSVGDecade(init_data, era, color) {
 
 
     var dim = {
-        width: 600,
+        width: 700,
         height: 700
     }
 
@@ -345,7 +351,7 @@ function updateSVGDecade(init_data, era, color) {
             .attr("y", d => yScale(d))
             .attr("text-anchor", "end")
             .attr("fill", "dimgray")
-            .style("font-size", "14px")
+            .style("font-size", "11px")
             .style("font-family", "Poppins")
             .style("opacity", 0)
             .transition()
@@ -355,7 +361,7 @@ function updateSVGDecade(init_data, era, color) {
             .attr("y", d => yScale(d))
             .attr("text-anchor", "end")
             .attr("fill", "dimgray")
-            .style("font-size", "14px")
+            .style("font-size", "11px")
             .style("font-family", "Poppins")
             .style("opacity", 1)
 
