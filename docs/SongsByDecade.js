@@ -394,7 +394,7 @@ function updateSVGDecade(init_data, era, color) {
     var yLabel = svg.append("g")
             .append("text")
             .text(yAxLabel)
-            .attr("x", margin.top/2)
+            .attr("x", margin.top/2 + 10)
             .attr("y", margin.top/2 - 5)
             .attr("fill", "dimgray")
             .style("font-size", "14px")
