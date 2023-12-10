@@ -82,7 +82,7 @@ function updateSVGBubbles(data) {
 
     var title = svg.append("g")
         .append("text")
-        .attr("x", 22)
+        .attr("x", 45)
         .attr("y", 30)
         .attr("fill", "dimgray")
         .style("font-size", "22px")
@@ -174,9 +174,9 @@ function updateSVGBubblesDecade(init_data, era, color) {
         return data.slice(0, n);
     }
 
-    var top_tracks_200 = top_tracks(data, 100);
-    var top_tracks_max = top_tracks_200[0]['total_track_pop']; 
-    var top_tracks_min = top_tracks_200[99]['total_track_pop'];
+    var top_tracks_100 = top_tracks(data, 100);
+    var top_tracks_max = top_tracks_100[0]['total_track_pop']; 
+    var top_tracks_min = top_tracks_100[99]['total_track_pop'];
 
     var svg = d3.select("#bubble-graph")
         .style("width", width)
@@ -201,7 +201,7 @@ function updateSVGBubblesDecade(init_data, era, color) {
 
     var title = svg.append("g")
         .append("text")
-        .attr("x", 22)
+        .attr("x", 45)
         .attr("y", 30)
         .attr("fill", "dimgray")
         .style("font-size", "22px")
@@ -214,7 +214,7 @@ function updateSVGBubblesDecade(init_data, era, color) {
 
     var node = svg.append("g")
         .selectAll("circle")
-        .data(top_tracks_200)
+        .data(top_tracks_100)
         .enter()
         .append("circle")
             .attr("cx", width / 2)
@@ -262,23 +262,27 @@ function updateSVGBubblesDecade(init_data, era, color) {
         return radScale(d.total_track_pop)
     }
 
-    var simulation = d3.forceSimulation(top_tracks_200)
-
-    simulation
-        .force("center", d3.forceCenter().x(width / 2).y(height / 2 + 20).strength(0.9))
-        .force("charge", d3.forceManyBody().strength(0.9))
-        .force("collide", d3.forceCollide().strength(0.6)
-        .radius(function(d){ return radScale(d.total_track_pop)+0.5; })
+    var simulation = d3.forceSimulation(top_tracks_100)
+    .force("center", d3.forceCenter().x(width / 2).y(height / 2).strength(1.75))
+    .force("charge", d3.forceManyBody().strength(0.9))
+    .force("collide", d3.forceCollide().strength(0.6)
+        .radius(function(d) { return radScale(d.total_track_pop) + 0.5; })
         .iterations(1))
-        .on("tick", function(d){
-            node
-                .attr("cx", function(d){ return d.x; })
-                .attr("cy", function(d){ return d.y; })
+    .on("tick", ticked)
+    .on("end", function() {
+        simDone = true;
+        colorBool = true;
+    });
+
+function ticked() {
+    node
+        .attr("cx", function(d) {
+            return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
         })
-        .on("end", function() {
-            simDone = true
-            colorBool = true
-        })
+        .attr("cy", function(d) {
+            return d.y = Math.max(radius(d) + margin.top, Math.min(height - radius(d) - margin.bottom, d.y));
+        });
+}
 
         var backButton = svg.append("g")
         .attr("transform", "translate(10, 10)")
@@ -300,11 +304,20 @@ function updateSVGBubblesDecade(init_data, era, color) {
                 .attr("text-anchor", "middle")
                 .attr("fill", "dimgray");
 
-        function ticked() {
-            svg.selectAll("circle")
-            .attr("cx", function(d) {return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x))})
-            .attr("cy", function(d) {return d.y = Math.max(radius(d) + margin.top/2 + 5, Math.min(height - radius(d) - margin.bottom, d.y))})
-        }
+        // function ticked() {
+        //     svg.selectAll("circle")
+        //     .attr("cx", function(d) {return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x))})
+        //     .attr("cy", function(d) {return d.y = Math.max(radius(d) + margin.top/2 + 5, Math.min(height - radius(d) - margin.bottom, d.y))})
+        // }
+        // function ticked() {
+        //     svg.selectAll("circle")
+        //         .attr("cx", function(d) {
+        //             return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
+        //         })
+        //         .attr("cy", function(d) {
+        //             return d.y = Math.max(radius(d) + margin.top, Math.min(height - radius(d) - margin.bottom, d.y));
+        //         });
+        // }
 
         ticked()
 }
