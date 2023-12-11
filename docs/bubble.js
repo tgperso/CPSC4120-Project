@@ -150,7 +150,6 @@ function updateSVGBubbles(data) {
 
     simulation
         .force("center", d3.forceCenter().x(width / 2).y(height / 2 + 20))
-        //.force("charge", d3.forceManyBody().strength(-30))
         .force("collide", d3.forceCollide(d => radius(d)).strength(0.7))
         .alpha(1).alphaDecay(0.05)
         .on("tick", ticked)
@@ -184,7 +183,6 @@ function updateSVGBubblesDecade(init_data, era, color) {
     var data = filterData(era, init_data)
 
     var colors = ["#edc949","#4e79a7","#e15759","#76b7b2","#59a14f","#f28e2c","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
-    //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffd92f","#b15928"].reverse()
 
     data.sort((a, b) => a.total_artist_pop - b.total_artist_pop)
     var artists = [...new Set(data.map(d => d.artist))]

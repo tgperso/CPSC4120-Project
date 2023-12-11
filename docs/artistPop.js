@@ -21,7 +21,6 @@ d3.csv("artistPop.csv").then(
                 left: 50
             }
         }
-        //console.log(dataset)
 
         //ensuring these vars are read as numbers
         dataset.forEach(d => {

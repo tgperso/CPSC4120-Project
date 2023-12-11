@@ -37,7 +37,6 @@ function updateSVG(data) {
 
     var simDone = false
 
-    //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffd92f","#b15928"]
     var colors = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
 
     //ensures the popularity var is read as a float
@@ -80,7 +79,6 @@ function updateSVG(data) {
     svg.selectAll("rect").remove();
 
     var yScale = d3.scaleLinear()
-    //.domain([d3.min(data, pop),d3.max(data, pop)])
                     .domain([0,600])
                     .range([dim.height - margin.bottom,margin.top - 5])
 
@@ -93,7 +91,6 @@ function updateSVG(data) {
                     .range(colors)
 
     var radScale = d3.scaleLinear()
-                    //.domain([d3.min(data, pop),d3.max(data, pop)])
                     .domain([1,600])
                     .range([dim.height/500,dim.height/100]);
 
@@ -105,7 +102,6 @@ function updateSVG(data) {
 
     var simulation = d3.forceSimulation(data)
         .force('pop', d3.forceY(dim.height/2 + margin.top - margin.bottom).strength(0.01))
-        //.force('pop', d3.forceY(d => yScale(d.total_track_pop)))
         .force('era', d3.forceX((d => xScale(d.era) + (dim.width + margin.left - margin.right)/15)).strength(0.5))
         .force('collision', d3.forceCollide(d => radius(d) + 0.5))
         .alpha(1).alphaDecay(0.08)
