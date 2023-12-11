@@ -30,32 +30,11 @@ function updateSVGBubbles(data) {
     var simDone = false
 
     var margin = {
-        left: width/5,
+        left: width/10,
         right: width/10,
         top: height/10,
-        bottom: height/8
+        bottom: height/10
     }
-
-    /*if (colorBool)
-    {
-        var colors = ["#edc949","#59a14f","#76b7b2","#4e79a7","#e15759","#f28e2c","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
-        //#edc949 -> yellow
-        //#59a14f -> green
-        //#76b7b2 -> teal
-        //#e15759 -> red
-        //#f28e2c -> orange
-        //#4e79a7 -> blue
-        
-        //#76b7b2 -> teal
-        //#59a14f -> green
-        //#edc949 -> yellow
-        //#f28e2c -> orange
-        //#4e79a7 -> blue
-        //#e15759 -> red
-    }
-    else {
-        var colors = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
-    }*/
 
     var colors = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
 
@@ -196,10 +175,10 @@ function updateSVGBubblesDecade(init_data, era, color) {
     var simDone = false
 
     var margin = {
-        left: width/5,
+        left: width/10,
         right: width/10,
         top: height/10,
-        bottom: height/8
+        bottom: height/10
     }
 
     var data = filterData(era, init_data)
