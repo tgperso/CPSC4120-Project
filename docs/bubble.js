@@ -8,14 +8,18 @@ d3.csv("topArtists.csv").then(
 
 interact.digDown3 = function(era, color) {
     d3.csv("topArtists.csv").then(
-        function(data) {
+        function(init_data) {
             updateSVGBubblesDecade(init_data, era, color)
         }
     )
 }
 
 interact.digUp3 = function() {
-    console.log("Dig Up 3")
+    d3.csv("topArtists.csv").then(
+        function(init_data) {
+            updateSVGBubbles(init_data)
+        }
+    )
 }
 
 var width = 700
@@ -25,7 +29,14 @@ var colorBool = false;
 function updateSVGBubbles(data) {
     var simDone = false
 
-    if (colorBool)
+    var margin = {
+        left: width/5,
+        right: width/10,
+        top: height/10,
+        bottom: height/8
+    }
+
+    /*if (colorBool)
     {
         var colors = ["#edc949","#59a14f","#76b7b2","#4e79a7","#e15759","#f28e2c","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
         //#edc949 -> yellow
@@ -44,7 +55,9 @@ function updateSVGBubbles(data) {
     }
     else {
         var colors = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
-    }
+    }*/
+
+    var colors = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
 
     var eras = [...new Set(data.map(d => d.era))];
     
@@ -63,9 +76,23 @@ function updateSVGBubbles(data) {
     var top_tracks_max = top_tracks_200[0]['total_track_pop']; 
     var top_tracks_min = top_tracks_200[199]['total_track_pop'];
 
+    var customOrder = ["60", "70", "80", "90", "00", "10"];
+
+    // Create a custom sorting function
+    function customSort(a, b) {
+        return customOrder.indexOf(a.era) - customOrder.indexOf(b.era);
+    }
+    
+    // Sort the dataset using the custom sorting function
+    top_tracks_200.sort(customSort);
+
     var radScale = d3.scaleLinear()
         .domain([top_tracks_min, top_tracks_max])
         .range([6,height/15]);
+
+    function radius(d) {
+        return radScale(d.total_track_pop)
+    }
 
     var svg = d3.select("#bubble-graph")
         .style("width", width)
@@ -77,6 +104,10 @@ function updateSVGBubbles(data) {
 
     // Remove old text
     svg.selectAll("text")
+        .transition().duration(150).style("opacity", 0)
+        .remove();
+
+    svg.selectAll("rect")
         .transition().duration(150).style("opacity", 0)
         .remove();
 
@@ -102,6 +133,7 @@ function updateSVGBubbles(data) {
             .attr("cy", height / 2)
             .attr("fill", d => d3.color(colorScale(d.era)))
             .attr("r", d => radScale(d.total_track_pop))
+            .style("cursor", "pointer")
             .on("mouseover", function(event, d) {
                 const [mouseX, mouseY] = [event.pageX, event.pageY];
             
@@ -127,28 +159,41 @@ function updateSVGBubbles(data) {
             })
             .on("click", function(event, d){
                 if(simDone){ updateSVGBubblesDecade(data, d.era, colorScale(d.era));
-                interact.digDown2();}
+                interact.digDown1(d.era, colorScale(d.era));}
             })
+
+    top_tracks_200.forEach(function(d) {
+                d.x = width/2; // Set the x position based on the data
+                d.y = height/2; // Set the y position based on the data
+    });
 
     var simulation = d3.forceSimulation(top_tracks_200)
 
     simulation
-        .force("center", d3.forceCenter().x(width / 2).y(height / 2 + 20).strength(0.9))
-        .force("charge", d3.forceManyBody().strength(0.9))
-        .force("collide", d3.forceCollide().strength(0.6)
-        .radius(function(d){ return radScale(d.total_track_pop)+0.5; })
-        .iterations(1))
-        .on("tick", function(d){
-            node
-                .attr("cx", function(d){ return d.x; })
-                .attr("cy", function(d){ return d.y; })
-        })
+        .force("center", d3.forceCenter().x(width / 2).y(height / 2 + 20))
+        //.force("charge", d3.forceManyBody().strength(-30))
+        .force("collide", d3.forceCollide(d => radius(d)).strength(0.7))
+        .alpha(1).alphaDecay(0.05)
+        .on("tick", ticked)
         .on("end", function() {
             simDone = true
         })
+
+    function ticked() {
+            node
+                .attr("cx", function(d) {
+                    return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
+                })
+                .attr("cy", function(d) {
+                    return d.y = Math.max(radius(d) + margin.top, Math.min(height - radius(d) - margin.bottom, d.y));
+                });
+    }
+        
+    ticked()
 }
 
 function updateSVGBubblesDecade(init_data, era, color) {
+    var simDone = false
 
     var margin = {
         left: width/5,
@@ -158,8 +203,6 @@ function updateSVGBubblesDecade(init_data, era, color) {
     }
 
     var data = filterData(era, init_data)
-
-    var simDone = false
 
     var colors = ["#edc949","#4e79a7","#e15759","#76b7b2","#59a14f","#f28e2c","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
     //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffd92f","#b15928"].reverse()
@@ -191,6 +234,10 @@ function updateSVGBubblesDecade(init_data, era, color) {
         .transition().duration(150).style("opacity", 0)
         .remove();
 
+    svg.selectAll("rect")
+        .transition().duration(150).style("opacity", 0)
+        .remove();
+
     var colorScale = d3.scaleOrdinal()
         .domain(artists)
         .range(colors)
@@ -198,6 +245,10 @@ function updateSVGBubblesDecade(init_data, era, color) {
     var radScale = d3.scaleLinear()
         .domain([top_tracks_min, top_tracks_max])
         .range([6,height/15]);
+
+    function radius(d) {
+        return radScale(d.total_track_pop)
+    }
 
     var title = svg.append("g")
         .append("text")
@@ -211,6 +262,11 @@ function updateSVGBubblesDecade(init_data, era, color) {
         .text("Top 100 Tracks by Popularity of the " + getDecadeDate(era))
 
     const tooltip = d3.select(".tooltip")
+
+    top_tracks_100.forEach(function(d) {
+        d.x = width/2; // Set the x position based on the data
+        d.y = height/2; // Set the y position based on the data
+    });
 
     var node = svg.append("g")
         .selectAll("circle")
@@ -263,64 +319,52 @@ function updateSVGBubblesDecade(init_data, era, color) {
     }
 
     var simulation = d3.forceSimulation(top_tracks_100)
-    .force("center", d3.forceCenter().x(width / 2).y(height / 2).strength(1.75))
-    .force("charge", d3.forceManyBody().strength(0.9))
-    .force("collide", d3.forceCollide().strength(0.6)
-        .radius(function(d) { return radScale(d.total_track_pop) + 0.5; })
-        .iterations(1))
+    .force("center", d3.forceCenter().x(width / 2).y(height / 2))
+    //.force("charge", d3.forceManyBody().strength(1))
+    .force("collide", d3.forceCollide(d => radius(d)).strength(0.7))
+    .alpha(1).alphaDecay(0.05)
     .on("tick", ticked)
     .on("end", function() {
         simDone = true;
-        colorBool = true;
-    });
+        colorBool = true;})
 
-function ticked() {
-    node
-        .attr("cx", function(d) {
-            return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
-        })
-        .attr("cy", function(d) {
-            return d.y = Math.max(radius(d) + margin.top, Math.min(height - radius(d) - margin.bottom, d.y));
-        });
+    var backButton = svg.append("g")
+            .attr("transform", "translate(10, 10)")
+            .style("cursor", "pointer") // Add a pointer cursor to indicate it's clickable
+            .on("click", function() {
+                if(simDone) {
+                    interact.digUp1();
+                    interact.digUp3(); 
+                }
+            });
+          
+    backButton.append("rect")
+            .attr("width", 30)
+            .attr("height", 30)
+            .attr("fill", "#ccc");
+          
+    backButton.append("text")
+            .text("<<")
+            .attr("x", 15)
+            .style("font-family", "Poppins")
+            .attr("y", 22)
+            .attr("text-anchor", "middle")
+            .attr("fill", "dimgray");
+
+
+    function ticked() {
+            node
+                .attr("cx", function(d) {
+                    return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
+                })
+                .attr("cy", function(d) {
+                    return d.y = Math.max(radius(d) + margin.top + 5, Math.min(height - radius(d) - margin.bottom, d.y));
+                });
+        }
+        
+    ticked()
 }
 
-        var backButton = svg.append("g")
-        .attr("transform", "translate(10, 10)")
-        .style("cursor", "pointer") // Add a pointer cursor to indicate it's clickable
-        .on("click", function() {
-            if(simDone) {updateSVGBubbles(init_data); interact.digUp2()};
-        });
-      
-        backButton.append("rect")
-                .attr("width", 30)
-                .attr("height", 30)
-                .attr("fill", "#ccc");
-            
-        backButton.append("text")
-                .text("<<")
-                .attr("x", 15)
-                .style("font-family", "Poppins")
-                .attr("y", 22)
-                .attr("text-anchor", "middle")
-                .attr("fill", "dimgray");
-
-        // function ticked() {
-        //     svg.selectAll("circle")
-        //     .attr("cx", function(d) {return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x))})
-        //     .attr("cy", function(d) {return d.y = Math.max(radius(d) + margin.top/2 + 5, Math.min(height - radius(d) - margin.bottom, d.y))})
-        // }
-        // function ticked() {
-        //     svg.selectAll("circle")
-        //         .attr("cx", function(d) {
-        //             return d.x = Math.max(radius(d) + margin.left, Math.min(width - radius(d) - margin.right, d.x));
-        //         })
-        //         .attr("cy", function(d) {
-        //             return d.y = Math.max(radius(d) + margin.top, Math.min(height - radius(d) - margin.bottom, d.y));
-        //         });
-        // }
-
-        ticked()
-}
 
 function filterData(era, data) {
     data = data.filter(function(item) {

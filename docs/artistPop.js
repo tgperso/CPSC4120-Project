@@ -132,6 +132,7 @@ d3.csv("artistPop.csv").then(
                       })
                       .on("click", function(event, d) {
                         interact.digDown1((Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10).toString().slice(-2), colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
+                        interact.digDown3((Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10).toString().slice(-2), colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                         console.log((Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10).toString().slice(-2))
                         console.log(colorScale(Math.floor(dataset.find(e => e.artist_id === d.artist_id && e.total_artist_pop === d.maxPop).year.getFullYear() / 10) * 10))
                       })

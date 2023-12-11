@@ -15,7 +15,11 @@ interact.digDown1 = function(era, color) {
 }
 
 interact.digUp1 = function() {
-    console.log("Dig Up 1")
+    d3.csv("topArtists.csv").then(
+        function(init_data) {
+            updateSVG(init_data)
+        }
+    )
 }
 
 function updateSVG(data) {
@@ -40,6 +44,16 @@ function updateSVG(data) {
     var pop = d => parseFloat(d.total_track_pop);
 
     var eras = [...new Set(data.map(d => d.era))];
+
+    var customOrder = ["60", "70", "80", "90", "00", "10"];
+
+    // Create a custom sorting function
+    function customSort(a, b) {
+        return customOrder.indexOf(a.era) - customOrder.indexOf(b.era);
+    }
+    
+    // Sort the dataset using the custom sorting function
+    data.sort(customSort);
 
     //create SVG
     var svg = d3.select('#SongsByDecade')
@@ -127,7 +141,7 @@ function updateSVG(data) {
              .html(`<strong>Track:</strong> ${d.title}<br><strong>Artist:</strong> ${d.artist}`)
              .style("left", mouseX + 20 + "px")
              .style("top", mouseY - 30 + "px")
-
+            
              d3.select(this)
              .raise()
              .transition().duration(100)
@@ -143,8 +157,10 @@ function updateSVG(data) {
              .attr("r", d => radius(d))
          })
          .on("click", function(event, d){
-                if(simDone){ updateSVGDecade(data, d.era, colorScale(d.era));
-                interact.digDown2();}
+                if(simDone){ 
+                    interact.digDown3(d.era, colorScale(d.era));
+                    updateSVGDecade(data, d.era, colorScale(d.era));
+                }
          })
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
@@ -449,7 +465,10 @@ function updateSVGDecade(init_data, era, color) {
             .attr("transform", "translate(10, 10)")
             .style("cursor", "pointer") // Add a pointer cursor to indicate it's clickable
             .on("click", function() {
-                if(simDone) {updateSVG(init_data); interact.digUp2()};
+                if(simDone) {
+                    updateSVG(init_data); 
+                    interact.digUp3();
+                }
             });
           
     backButton.append("rect")
@@ -481,3 +500,7 @@ function filterData(era, data) {
     })
     return data
 } 
+
+function radius(d) {
+    return radScale(d.total_track_pop)
+}
