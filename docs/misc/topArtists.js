@@ -1,7 +1,7 @@
 d3.csv("topArtists.csv").then(
     function(init_data) {
 
-        var era = '60'
+        var era = 'all'
         new_data = filterData(era, init_data)
         console.log("Filtered Data:", new_data);
         updateSVG(new_data)
@@ -15,6 +15,7 @@ d3.csv("topArtists.csv").then(
                     new_data = filterData(era, init_data)
                     console.log("Filtered Data:", new_data);
                     updateSVG(new_data)
+                    d3.select("#buttonAll").style("background-color", "white")
                     d3.select("#button70").style("background-color", "white")
                     d3.select("#button80").style("background-color", "white")
                     d3.select("#button90").style("background-color", "white")

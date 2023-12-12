@@ -7,90 +7,44 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Poppins:400,700,900');
+        body {
+            display: flex;
+        }
+        main {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        section {
+            width: 60%; /* Adjust the width as needed */
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h4>A Data Driven Insight into the History of Music Popularity</h4>
-        <p>Contributors:</p>
-        <ul>
-            <li>Nic Mowll</li>
-            <li>Michael Harris</li>
-            <li>Thomas Personett</li>
-        </ul>
-    </header>
 
-    <section class="introduction">
-        <h1>Title of project/goal</h1>
-        <p>Description of Project and goal</p>
-    </section>
-
-    <section class="visualization">
-        <h1>Top Artist of Each Decade</h1>
-        <p>Short description of vis</p>
-            <div class="button-container">
-                <button id="button60">1960's</button>
-                <button id="button70">1970's</button>
-                <button id="button80">1980's</button>
-                <button id="button90">1990's</button>
-                <button id="button00">2000's</button>
-                <button id="button10">2010's</button>
-            </div>
+    <main>
+        <section class="visualization">
+            <h4>Data Driven Look into Music Popularity</h4>
             <div class="tooltip"></div>
             <div>
-                <svg id="TopArtists">
-
-                </svg>
+                <svg id="SongsByDecade"></svg>
             </div>
-    </section>
+        </section>
 
-    <section class="description">
-        <h2>Why is this visualization important and what do we find?</h2>
-        <p>Desctiption of Visualization</p>
-    </section>
+        <section class="visualization">
+            <div>
+                <svg id="ArtistPopularity"></svg>
+            </div>
+            <div>
+                <svg id="bubble-graph"></svg>
+            </div>
+        </section>
 
-    <section class="visualization">
-        <h1>Popularity of Each Artist Over Time</h1>
-        <p>Short description of vis</p>
-        <div>
-            <svg id="ArtistPopularity"></svg>
-            <!--<p><strong>Current Artist:<div id="artist-name">Artist Name will appear here when clicked.</div></strong></div></p>
-            <button id="reset-button">Reset Lines</button>-->
-            <script src="artistPop.js"></script>
-        </div>
+    </main>
 
-    </section>
-
-    <section class="description">
-        <h2>Why is this visualization important and what do we find?</h2>
-        <p>Desctiption of Visualization</p>
-    </section>
-
-    <section class="visualization">
-        <h1>Title of Vis</h1>
-        <p>Short description of vis</p>
-        <div>
-            <svg id="distro-vis"></svg>
-            <script src="distro.js"></script>
-        </div>
-    </section>
-
-    <section class="description">
-        <h2>Why is this visualization important and what do we find?</h2>
-        <p>Desctiption of Visualization</p>
-    </section>
-
-    <section class="description">
-        <h2>Conclusive Thoughts</h2>
-        <p>Description</p>
-    </section>
-
-    <footer>
-        <p>Thank you to Dylan Burati for the BillBoard Hot 100 - Full History Dataset</p>
-        <h3>Source: https://www.kaggle.com/datasets/dylanburati/billboard-hot-100-full-history</h3>
-    </footer>
-
-    <script src="topArtists.js"></script>
-    <script src="distro.js"></script>
+    <script src="SongsByDecade.js"></script>
+    <script src="bubble.js"></script>
+    <script src="artistPop.js"></script>
 </body>
 </html>
